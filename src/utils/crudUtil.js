@@ -44,7 +44,7 @@ export const endShift = async (shiftId) => {
         await updateDoc(docRef, {end: endtime, duration:duration})
 }
 
-export const checkShiftStatus = async (workerId) =>
+/*export const checkShiftStatus = async (workerId) =>
 {
         const collectionRef = collection(db, "shifts")
         const q = query(collectionRef, orderBy("start", "desc"), where("name","==",workerId))
@@ -52,15 +52,54 @@ export const checkShiftStatus = async (workerId) =>
 
         let hasUnendedShift = false
         docs.forEach(shift => {
-                /*if (shift.data().end)*/
+                //if (shift.data().end)
                 console.log(shift.data())
                 
         })
 
         let duration = Timestamp.fromMillis(endtime.toMillis() - docRef.start.toMillis())
-        // ez igy nem mukodik meg mivel datumot returnol
+        //ez igy nem mukodik meg mivel datumot returnol
         await updateDoc(docRef, { end: endtime, duration: duration })
 }
+*/
+//stefan verzioja
+
+export const checkShiftStatus = async (workerId) => {
+        const collectionRef = collection(db, "shifts");
+        const q = query(
+          collectionRef,
+          where("name", "==", workerId),
+          //where("end", "==", null) 
+        );
+        const docs = await getDocs(q)
+      
+        /*
+        let hasUndendedShift = false
+        docs.forEach((shift) => { // -> vegig iteral a dokumentumokon, de nem hasznalja oket
+          if (docs.empty) { // -> igazabol nem mukodik mert azt nezi meg hogy a dokumentum letezik e, nem az ertekeit vizsgalja
+            hasUndendedShift = false;
+          }
+          else {
+            hasUndendedShift = true;
+          }
+        });
+        console.log(hasUndendedShift);*/
+
+        //fixed
+        let hasUndendedShift = false
+        let saidShiftId = null
+        docs.forEach((shift) => {
+                console.log(shift.data().end);
+                
+          if (shift.data().end==null) { 
+            hasUndendedShift = true;
+            saidShiftId = shift.id
+          }
+         
+        });
+        console.log(hasUndendedShift, saidShiftId);
+
+      };
 
 
 
