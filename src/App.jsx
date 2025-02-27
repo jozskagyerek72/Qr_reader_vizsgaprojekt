@@ -21,11 +21,16 @@ function App() {
         scanner.clear()
         setScanresult(result)
         try {
-          startShift(result)
+          //startShift(result)
+          console.log(result);
+          scanner.stop()
           
         } catch (error) {
           console.log(error)
           
+        } finally {
+          scanner.render(success, error)
+          scanner.start()
         }
     }
 
