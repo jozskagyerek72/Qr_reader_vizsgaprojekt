@@ -10,7 +10,7 @@ import { Result } from './Result'
 
 const router = createBrowserRouter([
   {path:"/" , element:<Reader/>},
-  {path:"/result", element:<Result/>}
+  {path:"/result/:status", element:<Result/>}
 ])
 
 function App() {

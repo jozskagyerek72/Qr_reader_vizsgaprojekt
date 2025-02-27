@@ -1,8 +1,13 @@
+import { Html5QrcodeScanner } from 'html5-qrcode'
 import React from 'react'
+import { useEffect } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const Reader = () => {
 
   const [scanresult,setScanresult] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(()=>{
 
@@ -18,6 +23,7 @@ export const Reader = () => {
         try {
           //startShift(result)
           console.log(result);
+          navigate("/result/success")
           
         } catch (error) {
           console.log(error)
@@ -40,6 +46,7 @@ export const Reader = () => {
   return (
     <div>
       reader...
+      <div id="reader"></div>
     </div>
   )
 }
