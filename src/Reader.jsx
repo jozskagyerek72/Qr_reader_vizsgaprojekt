@@ -8,6 +8,7 @@ import { checkShiftStatus } from './utils/crudUtil'
 export const Reader = () => {
 
   const [scanresult,setScanresult] = useState(null)
+  const [resultStatus, setResultStatus] = useState(null)
   const navigate = useNavigate()
 
   useEffect(()=>{
@@ -25,8 +26,9 @@ export const Reader = () => {
         try {
           //startShift(result)
           console.log(result);
-          checkShiftStatus(result)
-          navigate("/result/success")
+          setResultStatus(checkShiftStatus(result))
+          navigate("/result/"+resultStatus)
+          //tudja a rak mie mindig nullt mutat, majd maric hatha megoldja
           
         } catch (error) {
           console.log(error)

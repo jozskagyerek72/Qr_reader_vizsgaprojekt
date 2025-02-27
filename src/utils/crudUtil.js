@@ -21,14 +21,14 @@ export const addWorker = async (formdata) => {
         await addDoc(collectionRef, newItem)
 }
 
-export const startShift = async (formdata, setState) => {
+export const startShift = async (formdata/*, setState*/) => {
         const collectionRef = collection(db, "shifts")
         console.log(formdata);
 
-        const newItem = { ...formdata, start: Timestamp.now() }
+        const newItem = { name:formdata, start: Timestamp.now() }
         await addDoc(collectionRef, newItem).then(docRef => {
                 console.log("uj post azonositoja:" + docRef.id)
-                setState(docRef.id)
+                //setState(docRef.id)
         })
 }
 
@@ -89,15 +89,22 @@ export const checkShiftStatus = async (workerId) => {
         let hasUndendedShift = false
         let saidShiftId = null
         docs.forEach((shift) => {
-                console.log(shift.data().end);
-                
           if (shift.data().end==null) { 
             hasUndendedShift = true;
             saidShiftId = shift.id
           }
-         
         });
         console.log(hasUndendedShift, saidShiftId);
+
+        if(hasUndendedShift)
+        {
+                endShift(saidShiftId)
+                return "Shift ended"
+        }else
+        {
+                startShift(workerId)
+                return "Shift started"
+        }
 
       };
 

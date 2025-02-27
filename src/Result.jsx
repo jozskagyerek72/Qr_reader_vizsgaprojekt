@@ -17,7 +17,7 @@ export const Result = () => {
 
   return (
     <>
-    {status&& status=="success"&& 
+    {status&& 
       <div style={{
       backgroundColor:"green", 
       fontWeight: 900,
