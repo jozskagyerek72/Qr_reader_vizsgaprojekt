@@ -16,11 +16,11 @@ export const Result = () => {
 
 
   return (
-    <>
+    <div>
     {status&& 
       <div style={{
       backgroundColor:"green", 
-      fontWeight: 900,
+      fontWeight: 'bold',
       fontSize: "10rem",
       color: "white"
     }}>
@@ -38,7 +38,7 @@ export const Result = () => {
       result: {status}
     </div>
     }
-    </>
+    </div>
   )
 }
 
