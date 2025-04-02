@@ -25,7 +25,8 @@ export const startShift = async (formdata/*, setState*/) => {
         const collectionRef = collection(db, "shifts")
         console.log(formdata);
 
-        const newItem = { name:formdata, start: Timestamp.now() }
+        let arr = formdata.split(";")
+        const newItem = { workerId:arr[0] ,name:arr[1], start: Timestamp.now() }
         await addDoc(collectionRef, newItem).then(docRef => {
                 console.log("uj post azonositoja:" + docRef.id)
                 //setState(docRef.id)
@@ -66,9 +67,10 @@ export const endShift = async (shiftId) => {
 
 export const checkShiftStatus = async (workerId) => {
         const collectionRef = collection(db, "shifts");
+        let arr = workerId.split(";")
         const q = query(
           collectionRef,
-          where("name", "==", workerId),
+          where("workerId", "==", arr[0]),
           //where("end", "==", null) 
         );
         const docs = await getDocs(q)
