@@ -71,23 +71,12 @@ export const checkShiftStatus = async (workerId) => {
         const q = query(
           collectionRef,
           where("workerId", "==", arr[0]),
-          //where("end", "==", null) 
+          
         );
         const docs = await getDocs(q)
       
-        /*
-        let hasUndendedShift = false
-        docs.forEach((shift) => { // -> vegig iteral a dokumentumokon, de nem hasznalja oket
-          if (docs.empty) { // -> igazabol nem mukodik mert azt nezi meg hogy a dokumentum letezik e, nem az ertekeit vizsgalja
-            hasUndendedShift = false;
-          }
-          else {
-            hasUndendedShift = true;
-          }
-        });
-        console.log(hasUndendedShift);*/
 
-        //fixed
+      
         let hasUndendedShift = false
         let saidShiftId = null
         docs.forEach((shift) => {
@@ -98,23 +87,60 @@ export const checkShiftStatus = async (workerId) => {
         });
         console.log(hasUndendedShift, saidShiftId);
 
-        if(hasUndendedShift)
+        if(await checkIf12hPassed(workerId))
         {
-                endShift(saidShiftId)
-                return "Shift ended"
+                if(hasUndendedShift)
+                {
+                        endShift(saidShiftId)
+                        return "Shift ended"
+                }else
+                {
+                        startShift(workerId)
+                        return "Shift started"
+                }
         }else
         {
-                startShift(workerId)
-                return "Shift started"
+                return "You should wait 12h before starting your next shift"
         }
 
       };
 
 
 
-export const readShifts = (setShifts) => {
+export const readShifts = (setShifts) => 
+{
         const collectionRef = collection(db, "shifts")
         const q = query(collectionRef, orderBy("workername", "asc"))
         const unsubscribe = onSnapshot(q, (snapshot) => { setShifts(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))) })
         return unsubscribe
 }
+
+export const checkIf12hPassed = async (workerId) => {
+        try {
+            const cRef = collection(db, "shifts");
+            const q = query(cRef, where("workerId", "==", workerId), orderBy("end", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                console.log("No shifts found for this worker");
+                return true; // or false, depending on your requirements
+            }
+            
+            // Get the most recent shift
+            const mostRecentShift = querySnapshot.docs[0].data();
+            const shiftEndTime = new Date(mostRecentShift.end.seconds * 1000);
+            const currentTime = new Date();
+            
+           // console.log("Last shift ended at:", shiftEndTime);
+            
+            // Calculate difference in hours
+            const hoursPassed = (currentTime - shiftEndTime) / (1000 * 60 * 60);
+            
+            //console.log(hoursPassed >= 12);
+            
+            return hoursPassed >= 12;
+        } catch (error) {
+            console.error("Error checking shift time:", error);
+            throw error;
+        }
+    }

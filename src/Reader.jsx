@@ -3,11 +3,13 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { checkShiftStatus } from './utils/crudUtil'
+import { checkIf12hPassed, checkShiftStatus } from './utils/crudUtil'
 
 export const Reader = () => {
   const [scanresult, setScanresult] = useState(null)
   const navigate = useNavigate()
+
+  checkIf12hPassed("WFZUQ5L3G7TbbTHoWRIc")
 
   useEffect(() => {
     const scanner = new Html5QrcodeScanner("reader", {
