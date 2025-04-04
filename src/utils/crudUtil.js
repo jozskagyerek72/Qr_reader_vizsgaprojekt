@@ -87,7 +87,8 @@ export const checkShiftStatus = async (workerId) => {
         });
         console.log(hasUndendedShift, saidShiftId);
 
-        if(await checkIf12hPassed(workerId))
+        const _12hpassed = await checkIf12hPassed(arr[0])
+        if(_12hpassed)
         {
                 if(hasUndendedShift)
                 {
@@ -100,7 +101,7 @@ export const checkShiftStatus = async (workerId) => {
                 }
         }else
         {
-                return "You should wait 12h before starting your next shift"
+                return "You should wait 12h before starting your next shift!"
         }
 
       };
