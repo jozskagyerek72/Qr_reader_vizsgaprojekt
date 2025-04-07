@@ -88,7 +88,10 @@ export const checkShiftStatus = async (workerId) => {
         console.log(hasUndendedShift, saidShiftId);
 
         const _12hpassed = await checkIf12hPassed(arr[0])
-        if(_12hpassed)
+        const _workerIsActive = await checkWorkerStatus(arr[0])
+        console.log(_workerIsActive);
+        
+        if(_12hpassed && _workerIsActive)
         {
                 if(hasUndendedShift)
                 {
@@ -101,7 +104,7 @@ export const checkShiftStatus = async (workerId) => {
                 }
         }else
         {
-                return "You should wait 12h before starting your next shift!"
+                return !_12hpassed ? "You should wait 12h before starting your next shift!" : "You are not an active worker."
         }
 
       };
@@ -145,3 +148,18 @@ export const checkIf12hPassed = async (workerId) => {
             throw error;
         }
     }
+
+//return true/false based on a workers id
+export const checkWorkerStatus = async (workerId) =>
+{
+        const cRef = collection(db, "workers", workerId);
+        const q = query(cRef);
+        const docs = await getDocs(q);
+
+        if ( docs[0].id != null )
+        {
+                if (docs[0].id == workerId) return true
+                else return false
+        } else return false
+
+}    
