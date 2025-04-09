@@ -2,11 +2,6 @@ import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, s
 import { db } from "./firebaseApp"
 
 export const readWorkers = async (setWorkers) => {
-        /*const querySnapshot = await getDocs(collection(db, "workers"))
-        let workers = []
-        querySnapshot.forEach((doc)=>  { workers.push({...doc.data(), id:doc.id}) })
-        return workers*/
-
         const collectionRef = collection(db, "workers")
         const q = query(collectionRef, orderBy("name", "asc"))
         const unsubscribe = onSnapshot(q, (snapshot) => { setWorkers(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))) })
@@ -41,30 +36,15 @@ export const endShift = async (shiftId) => {
         
         
         let duration = ( ((endtime.toMillis()) - ( (await getDoc(docRef)).data().start.toMillis())) )/3600000
-        // mostmar mukodik, szep munka en👍
+        
         await updateDoc(docRef, {end: endtime, duration:duration})
 }
 
-/*export const checkShiftStatus = async (workerId) =>
-{
-        const collectionRef = collection(db, "shifts")
-        const q = query(collectionRef, orderBy("start", "desc"), where("name","==",workerId))
-        const docs = await getDocs(q)
 
-        let hasUnendedShift = false
-        docs.forEach(shift => {
-                //if (shift.data().end)
-                console.log(shift.data())
-                
-        })
-
-        let duration = Timestamp.fromMillis(endtime.toMillis() - docRef.start.toMillis())
-        //ez igy nem mukodik meg mivel datumot returnol
-        await updateDoc(docRef, { end: endtime, duration: duration })
-}
+/*
+*       handles the shift's status automatically, end shift if there's one open, opens a new one if not
+        
 */
-//stefan verzioja
-
 export const checkShiftStatus = async (workerId) => {
         const collectionRef = collection(db, "shifts");
         let arr = workerId.split(";")
@@ -127,20 +107,18 @@ export const checkIf12hPassed = async (workerId) => {
             
             if (querySnapshot.empty) {
                 console.log("No shifts found for this worker");
-                return true; // or false, depending on your requirements
+                return true; 
             }
             
-            // Get the most recent shift
+            
             const mostRecentShift = querySnapshot.docs[0].data();
             const shiftEndTime = new Date(mostRecentShift.end.seconds * 1000);
             const currentTime = new Date();
+
             
-           // console.log("Last shift ended at:", shiftEndTime);
-            
-            // Calculate difference in hours
             const hoursPassed = (currentTime - shiftEndTime) / (1000 * 60 * 60);
             
-            //console.log(hoursPassed >= 12);
+            
             
             return hoursPassed >= 12;
         } catch (error) {
@@ -149,17 +127,30 @@ export const checkIf12hPassed = async (workerId) => {
         }
     }
 
-//return true/false based on a workers id
-export const checkWorkerStatus = async (workerId) =>
-{
-        const cRef = collection(db, "workers", workerId);
-        const q = query(cRef);
-        const docs = await getDocs(q);
-
-        if ( docs[0].id != null )
-        {
-                if (docs[0].id == workerId) return true
-                else return false
-        } else return false
-
-}    
+// Return true if worker exists AND has status "active", false otherwise
+export const checkWorkerStatus = async (workerId) => {
+        console.log("Checking status for worker:", workerId);
+        
+        try {
+            
+            const docRef = doc(db, "workers", workerId);
+            const docSnap = await getDoc(docRef);
+    
+            if (!docSnap.exists()) {
+                console.log("Worker does not exist");
+                return false;
+            }
+    
+            const workerData = docSnap.data();
+            const isActive = workerData.status === "active";
+    
+            if (!isActive) {
+                console.log("Worker is not active");
+            }
+    
+            return isActive;
+        } catch (error) {
+            console.error("Error checking worker status:", error);
+            return false;
+        }
+    }   
