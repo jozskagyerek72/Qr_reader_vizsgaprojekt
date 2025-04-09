@@ -9,7 +9,6 @@ export const Reader = () => {
   const [scanresult, setScanresult] = useState(null)
   const navigate = useNavigate()
 
-  checkIf12hPassed("WFZUQ5L3G7TbbTHoWRIc")
 
   useEffect(() => {
     const scanner = new Html5QrcodeScanner("reader", {
@@ -27,7 +26,7 @@ export const Reader = () => {
       } catch (error) {
         console.log(error)
       }
-      // Don't re-render the scanner here if you want to navigate away
+      
     }
 
     const error = (err) => {
@@ -36,15 +35,18 @@ export const Reader = () => {
 
     scanner.render(success, error)
 
-    // Cleanup function
+    
     return () => {
       scanner.clear()
     }
   }, [navigate])
 
   return (
-    <div>
-      reader...
+    <div style={{
+      fontFamily: "monospace",
+      textAlign:"center"
+    }}>
+      <h2>Please read your QR-code here</h2>
       <div id="reader"></div>
     </div>
   )

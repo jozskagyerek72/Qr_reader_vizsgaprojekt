@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import error from "../public/error.gif"
+import success from "../public/success.gif"
 
 export const Result = () => {
   
@@ -12,13 +13,13 @@ export const Result = () => {
   useEffect(()=>{
     setTimeout(() => {
       navigate("/")
-    }, 3000);
+    }, 3000); 
   },[])
 
 
   return (
     <div>
-    {status&& (status=="You should wait 12h before starting your next shift!" || status=="error") &&
+    {status&& (status=="You should wait 12h before starting your next shift!" || status=="error" || status=="You are not an active worker.") &&
       <div className='result' style={{
       backgroundColor:"white", 
       fontWeight: 'bold',
@@ -40,15 +41,26 @@ export const Result = () => {
     </div>
     }
 
-    {status&& 
-      <div style={{
-      backgroundColor:"red", 
-      fontWeight: 900,
-      fontSize: "10rem",
-      color: "white"
-    }}>
-      result: {status}
-    </div>
+    {status&& (status=="Shift started" || status=="Shift ended") &&
+      <div className='result' style={{
+        backgroundColor:"white", 
+        fontWeight: 'bold',
+        width:"100vw",
+        color: "green",
+        height: "100vh",
+        display: 'flex',
+        justifyContent: "center",
+        alignContent: "center",
+        textAlign:"center",
+        alignItems:"center",
+        flexDirection: "column",
+        fontSize: 24,
+        textDecoration:"underline",
+        fontFamily: "monospace"
+      }}>
+        <img src={success} alt="success" />
+        <p>{status}</p>
+      </div>
     }
     </div>
   )
